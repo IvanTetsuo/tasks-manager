@@ -4,6 +4,11 @@ import { Project } from './project.entity';
 import { Task } from './task.entity';
 import { Exclude } from 'class-transformer';
 
+enum UserRole {
+  EMPLOYEE = 'Employee',
+  ADMIN = 'Admin',
+}
+
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
@@ -27,8 +32,15 @@ export class User {
   @Column({ type: 'varchar', length: 20 })
   surname!: string;
 
+  @ApiProperty({ example: 'Employee', description: 'Employee или Admin' })
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.EMPLOYEE })
+  role!: UserRole;
+
   @ManyToMany(() => Project, (project) => project.participants)
   assignedProjects: Project[]; // Проекты, в которых пользователь участвует
+
+  @ManyToMany(() => Task, (task) => task.participants)
+  assignedTasks: Task[]; // Задания, в которых пользователь участвует
 
   @OneToMany(() => Project, (project) => project.user, { cascade: true })
   projects: Project[];

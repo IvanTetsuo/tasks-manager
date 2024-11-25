@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinTable, ManyToMany } from 'typeorm';
 import { Project } from './project.entity';
 import { User } from './user.entity';
 
@@ -31,8 +31,10 @@ export class Task {
     example: '0',
     description: 'Позиция, очередность задачи внутри колонки',
   })
-  @Column({ type: 'int', default: 0, unsigned: true /* unique: true */ })
-  verticalPosition!: number;
+
+  @ManyToMany(() => User, (user) => user.assignedTasks)
+  @JoinTable() // Связывает текущую сущность с User через промежуточную таблицу
+  participants: User[]; // Список ответственных за конкретное задание
 
   @ManyToOne(() => Project, (project) => project.tasks, { cascade: true })
   project: Project;
