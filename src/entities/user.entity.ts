@@ -15,6 +15,11 @@ export class User {
   @ApiProperty({ example: '1', description: 'Уникальный идентификатор' })
   id!: number;
 
+  @ApiProperty({ example: 'user@mail.ru', description: 'Почтовый адрес' })
+  @Column({ type: 'varchar', length: 100, unique: true })
+  @Exclude()
+  email!: string;
+
   @ApiProperty({ example: 'login', description: 'Логин' })
   @Column({ type: 'varchar', length: 100, unique: true })
   login!: string;
@@ -42,9 +47,11 @@ export class User {
   @ManyToMany(() => Task, (task) => task.participants)
   assignedTasks: Task[]; // Задания, в которых пользователь участвует
 
-  @OneToMany(() => Project, (project) => project.user, { cascade: true })
+  @OneToMany(() => Project, (project) => project.user, { cascade: ['soft-remove'] })
   projects: Project[];
 
-  @OneToMany(() => Task, (task) => task.user, { cascade: true })
+  @OneToMany(() => Task, (task) => task.user, { cascade: ['soft-remove'] })
   tasks: Task[];
 }
+
+// вместо cascade true сделать soft-delete

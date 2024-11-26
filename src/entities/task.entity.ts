@@ -27,18 +27,16 @@ export class Task {
   @Column({ type: 'timestamptz', default: 'NOW()' })
   dateOfCreation!: Date;
 
-  @ApiProperty({
-    example: '0',
-    description: 'Позиция, очередность задачи внутри колонки',
-  })
+  @Column({ type: 'boolean', default: false })
+  isArchived!: boolean;  // Логическое поле для soft-delete
 
   @ManyToMany(() => User, (user) => user.assignedTasks)
   @JoinTable() // Связывает текущую сущность с User через промежуточную таблицу
   participants: User[]; // Список ответственных за конкретное задание
 
-  @ManyToOne(() => Project, (project) => project.tasks, { cascade: true })
+  @ManyToOne(() => Project, (project) => project.tasks, { cascade: ['soft-remove'] })
   project: Project;
 
-  @ManyToOne(() => User, (user) => user.tasks, { cascade: true })
+  @ManyToOne(() => User, (user) => user.tasks, { cascade: ['soft-remove'] })
   user: User;
 }

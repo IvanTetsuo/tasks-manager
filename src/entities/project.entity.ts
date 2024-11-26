@@ -40,9 +40,13 @@ export class Project {
   @JoinTable() // Связывает текущую сущность с User через промежуточную таблицу
   participants: User[]; // Список участников проекта
 
-  @ManyToOne(() => User, (user) => user.projects, { cascade: true })
+  @ManyToOne(() => User, (user) => user.projects, { cascade: ['soft-remove'] })
   user: User; // author: User;
 
-  @OneToMany(() => Task, (task) => task.project, { cascade: true })
+  @OneToMany(() => Task, (task) => task.project, { cascade: ['soft-remove'] })
   tasks: Task[];
 }
+
+  // @ApiProperty({ example: '0', description: 'Логическое поле для soft-delete' })
+  // @Column({ type: 'boolean', default: false })
+  // isArchived!: boolean;  // Логическое поле для soft-delete
